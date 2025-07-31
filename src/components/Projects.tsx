@@ -3,26 +3,22 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, Github } from 'lucide-react';
 
-const Projects = () => {
-  const [isVisible, setIsVisible] = useState(false);
+interface ProjectsProps {
+  isVisible?: boolean;
+  scrollDirection?: 'up' | 'down';
+  animationTrigger?: boolean;
+}
+
+const Projects = ({ isVisible = true, scrollDirection = 'down', animationTrigger = true }: ProjectsProps) => {
+  const [animationsVisible, setAnimationsVisible] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-
-    const element = document.getElementById('projects');
-    if (element) {
-      observer.observe(element);
+    if (animationTrigger) {
+      setAnimationsVisible(true);
+    } else {
+      setAnimationsVisible(false);
     }
-
-    return () => observer.disconnect();
-  }, []);
+  }, [animationTrigger]);
 
   const projects = [
     {
@@ -63,7 +59,7 @@ const Projects = () => {
     <section id="projects" className="py-24 relative">
       <div className="container mx-auto px-6">
         {/* Section Header */}
-        <div className={`text-center mb-16 transition-all duration-1000 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+        <div className={`text-center mb-16 transition-all duration-1000 ${animationsVisible ? 'animate-matrix-in-dynamic' : 'animate-matrix-out-dynamic'}`}>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-glow">
             Featured Projects
           </h2>
@@ -78,7 +74,7 @@ const Projects = () => {
             <Card
               key={project.title}
               className={`card-glass p-8 group hover:scale-[1.02] transition-all duration-500 hover:shadow-glow-primary ${
-                isVisible ? 'animate-fade-in-up' : 'opacity-0'
+                animationsVisible ? 'animate-flip-in-dynamic' : 'animate-flip-out-dynamic'
               }`}
               style={{ animationDelay: `${300 + index * 200}ms` }}
             >
@@ -144,7 +140,7 @@ const Projects = () => {
         </div>
 
         {/* View More Button */}
-        <div className={`text-center mt-12 transition-all duration-1000 delay-1000 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+        <div className={`text-center mt-12 transition-all duration-1000 delay-1000 ${animationsVisible ? 'animate-elastic-in-dynamic' : 'animate-elastic-out-dynamic'}`}>
           <Button
             variant="outline"
             size="lg"

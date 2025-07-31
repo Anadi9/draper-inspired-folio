@@ -1,6 +1,12 @@
 import { Github, Linkedin, Mail, Heart } from 'lucide-react';
 
-const Footer = () => {
+interface FooterProps {
+  isVisible?: boolean;
+  scrollDirection?: 'up' | 'down';
+  animationTrigger?: boolean;
+}
+
+const Footer = ({ isVisible = true, scrollDirection = 'down', animationTrigger = true }: FooterProps) => {
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [

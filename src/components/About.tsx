@@ -2,26 +2,22 @@ import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Code2, Palette, Zap } from 'lucide-react';
 
-const About = () => {
-  const [isVisible, setIsVisible] = useState(false);
+interface AboutProps {
+  isVisible?: boolean;
+  scrollDirection?: 'up' | 'down';
+  animationTrigger?: boolean;
+}
+
+const About = ({ isVisible = true, scrollDirection = 'down', animationTrigger = true }: AboutProps) => {
+  const [animationsVisible, setAnimationsVisible] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    const element = document.getElementById('about');
-    if (element) {
-      observer.observe(element);
+    if (animationTrigger) {
+      setAnimationsVisible(true);
+    } else {
+      setAnimationsVisible(false);
     }
-
-    return () => observer.disconnect();
-  }, []);
+  }, [animationTrigger]);
 
   const features = [
     {
@@ -46,7 +42,7 @@ const About = () => {
       <div className="container mx-auto px-6">
         <div className="max-w-4xl mx-auto">
           {/* Section Header */}
-          <div className={`text-center mb-16 transition-all duration-1000 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <div className={`text-center mb-16 transition-all duration-1000 ${animationsVisible ? 'animate-spiral-in-dynamic' : 'animate-spiral-out-dynamic'}`}>
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-glow">
               About Me
             </h2>
@@ -58,7 +54,7 @@ const About = () => {
           {/* Main Content */}
           <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
             {/* Text Content */}
-            <div className={`transition-all duration-1000 delay-300 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+            <div className={`transition-all duration-1000 delay-300 ${animationsVisible ? 'animate-slide-in-left-dynamic' : 'animate-slide-out-left-dynamic'}`}>
               <h3 className="text-2xl font-semibold mb-6 text-primary">
                 Crafting Digital Excellence
               </h3>
@@ -75,7 +71,7 @@ const About = () => {
             </div>
 
             {/* Visual Element */}
-            <div className={`relative transition-all duration-1000 delay-500 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+            <div className={`relative transition-all duration-1000 delay-500 ${animationsVisible ? 'animate-slide-in-right-dynamic' : 'animate-slide-out-right-dynamic'}`}>
               <div className="card-glass rounded-2xl p-8 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-radial opacity-50"></div>
                 <div className="relative z-10">
@@ -97,7 +93,7 @@ const About = () => {
               <Card
                 key={feature.title}
                 className={`card-glass p-6 text-center hover:scale-105 transition-all duration-500 hover:shadow-glow-primary ${
-                  isVisible ? 'animate-fade-in-up' : 'opacity-0'
+                  animationsVisible ? 'animate-zoom-in-dynamic' : 'animate-zoom-out-dynamic'
                 }`}
                 style={{ animationDelay: `${700 + index * 200}ms` }}
               >

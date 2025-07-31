@@ -5,8 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Mail, MapPin, Phone, Send } from 'lucide-react';
 
-const Contact = () => {
-  const [isVisible, setIsVisible] = useState(false);
+interface ContactProps {
+  isVisible?: boolean;
+  scrollDirection?: 'up' | 'down';
+  animationTrigger?: boolean;
+}
+
+const Contact = ({ isVisible = true, scrollDirection = 'down', animationTrigger = true }: ContactProps) => {
+  const [animationsVisible, setAnimationsVisible] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -14,22 +20,12 @@ const Contact = () => {
   });
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    const element = document.getElementById('contact');
-    if (element) {
-      observer.observe(element);
+    if (animationTrigger) {
+      setAnimationsVisible(true);
+    } else {
+      setAnimationsVisible(false);
     }
-
-    return () => observer.disconnect();
-  }, []);
+  }, [animationTrigger]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,7 +65,7 @@ const Contact = () => {
     <section id="contact" className="py-24 relative">
       <div className="container mx-auto px-6">
         {/* Section Header */}
-        <div className={`text-center mb-16 transition-all duration-1000 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+        <div className={`text-center mb-16 transition-all duration-1000 ${animationsVisible ? 'animate-swirl-in-dynamic' : 'animate-swirl-out-dynamic'}`}>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-glow">
             Let's Work Together
           </h2>
@@ -80,7 +76,7 @@ const Contact = () => {
 
         <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
           {/* Contact Form */}
-          <Card className={`card-glass p-8 transition-all duration-1000 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
+          <Card className={`card-glass p-8 transition-all duration-1000 ${animationsVisible ? 'animate-slide-in-left-dynamic' : 'animate-slide-out-left-dynamic'}`}
                 style={{ animationDelay: '300ms' }}>
             <h3 className="text-2xl font-semibold mb-6">Send a Message</h3>
             
@@ -132,7 +128,7 @@ const Contact = () => {
 
           {/* Contact Information */}
           <div className="space-y-8">
-            <div className={`transition-all duration-1000 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
+            <div className={`transition-all duration-1000 ${animationsVisible ? 'animate-slide-in-right-dynamic' : 'animate-slide-out-right-dynamic'}`}
                  style={{ animationDelay: '500ms' }}>
               <h3 className="text-2xl font-semibold mb-6">Get in Touch</h3>
               <p className="text-lg text-muted-foreground leading-relaxed mb-8">
@@ -147,7 +143,7 @@ const Contact = () => {
                 <Card
                   key={info.title}
                   className={`card-glass p-6 hover:scale-105 transition-all duration-500 hover:shadow-glow-primary ${
-                    isVisible ? 'animate-fade-in-up' : 'opacity-0'
+                    animationsVisible ? 'animate-bounce-in-dynamic' : 'animate-bounce-out-dynamic'
                   }`}
                   style={{ animationDelay: `${700 + index * 200}ms` }}
                 >
@@ -170,7 +166,7 @@ const Contact = () => {
             </div>
 
             {/* Call to Action */}
-            <div className={`transition-all duration-1000 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
+            <div className={`transition-all duration-1000 ${animationsVisible ? 'animate-pulse-in-dynamic' : 'animate-pulse-out-dynamic'}`}
                  style={{ animationDelay: '1300ms' }}>
               <Card className="card-glass p-6 text-center">
                 <h4 className="text-xl font-semibold mb-3">Ready to Start?</h4>

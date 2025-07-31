@@ -1,26 +1,22 @@
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 
-const Skills = () => {
-  const [isVisible, setIsVisible] = useState(false);
+interface SkillsProps {
+  isVisible?: boolean;
+  scrollDirection?: 'up' | 'down';
+  animationTrigger?: boolean;
+}
+
+const Skills = ({ isVisible = true, scrollDirection = 'down', animationTrigger = true }: SkillsProps) => {
+  const [animationsVisible, setAnimationsVisible] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    const element = document.getElementById('skills');
-    if (element) {
-      observer.observe(element);
+    if (animationTrigger) {
+      setAnimationsVisible(true);
+    } else {
+      setAnimationsVisible(false);
     }
-
-    return () => observer.disconnect();
-  }, []);
+  }, [animationTrigger]);
 
   const skillCategories = [
     {
@@ -59,7 +55,7 @@ const Skills = () => {
     <section id="skills" className="py-24 relative">
       <div className="container mx-auto px-6">
         {/* Section Header */}
-        <div className={`text-center mb-16 transition-all duration-1000 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+        <div className={`text-center mb-16 transition-all duration-1000 ${animationsVisible ? 'animate-wave-in-dynamic' : 'animate-wave-out-dynamic'}`}>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-glow">
             Technical Skills
           </h2>
@@ -74,7 +70,7 @@ const Skills = () => {
             <Card
               key={category.title}
               className={`card-glass p-8 transition-all duration-1000 hover:scale-105 hover:shadow-glow-primary ${
-                isVisible ? 'animate-fade-in-up' : 'opacity-0'
+                animationsVisible ? 'animate-morph-in-dynamic' : 'animate-morph-out-dynamic'
               }`}
               style={{ animationDelay: `${300 + categoryIndex * 200}ms` }}
             >
@@ -97,7 +93,7 @@ const Skills = () => {
                           isVisible ? 'animate-glow-pulse' : ''
                         }`}
                         style={{
-                          width: isVisible ? `${skill.level}%` : '0%',
+                          width: animationsVisible ? `${skill.level}%` : '0%',
                           transitionDelay: `${500 + categoryIndex * 200 + skillIndex * 100}ms`
                         }}
                       ></div>
@@ -110,7 +106,7 @@ const Skills = () => {
         </div>
 
         {/* Additional Info */}
-        <div className={`text-center mt-16 transition-all duration-1000 delay-1000 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+        <div className={`text-center mt-16 transition-all duration-1000 delay-1000 ${animationsVisible ? 'animate-pulse-in-dynamic' : 'animate-pulse-out-dynamic'}`}>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             I'm constantly learning and adapting to new technologies. My expertise spans across 
             the full development lifecycle, from initial concept to deployment and maintenance.

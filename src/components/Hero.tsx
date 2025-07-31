@@ -2,19 +2,23 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowDown, Github, Linkedin, Mail } from 'lucide-react';
 
-const Hero = () => {
-  const [isVisible, setIsVisible] = useState(false);
+interface HeroProps {
+  isVisible?: boolean;
+  scrollDirection?: 'up' | 'down';
+  animationTrigger?: boolean;
+}
+
+const Hero = ({ isVisible = true, scrollDirection = 'down', animationTrigger = true }: HeroProps) => {
+  const [animationsVisible, setAnimationsVisible] = useState(false);
 
   useEffect(() => {
-    setIsVisible(true);
-  }, []);
-
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    if (animationTrigger) {
+      setAnimationsVisible(true);
+    } else {
+      setAnimationsVisible(false);
     }
-  };
+  }, [animationTrigger]);
+
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -37,7 +41,7 @@ const Hero = () => {
       </div>
 
       <div className="container mx-auto px-6 text-center relative z-10">
-        <div className={`transition-all duration-1000 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+        <div className={`transition-all duration-1000 ${animationsVisible ? 'animate-slide-in-dynamic' : 'animate-slide-out-dynamic'}`}>
           {/* Main heading */}
           <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
             <span className="block text-foreground">Creative</span>
@@ -47,16 +51,16 @@ const Hero = () => {
           </h1>
           
           {/* Subtitle */}
-          <p className={`text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto transition-all duration-1000 delay-300 ${isVisible ? 'animate-fade-in-delayed' : 'opacity-0'}`}>
+          <p className={`text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto transition-all duration-1000 delay-300 ${animationsVisible ? 'animate-scale-in-dynamic' : 'animate-scale-out-dynamic'}`}>
             Building extraordinary digital experiences with cutting-edge technology and innovative design
           </p>
 
           {/* CTA Buttons */}
-          <div className={`flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 transition-all duration-1000 delay-500 ${isVisible ? 'animate-fade-in-delayed' : 'opacity-0'}`}>
+          <div className={`flex flex-col sm:flex-row gap-4 justify-center items-center mb-12 transition-all duration-1000 delay-500 ${animationsVisible ? 'animate-bounce-in-dynamic' : 'animate-bounce-out-dynamic'}`}>
             <Button
               size="lg"
               className="bg-primary hover:bg-primary/80 text-primary-foreground px-8 py-3 text-lg transition-all duration-300 hover:scale-105 hover:shadow-glow-primary"
-              onClick={() => scrollToSection('projects')}
+              
             >
               View My Work
             </Button>
@@ -64,14 +68,14 @@ const Hero = () => {
               variant="outline"
               size="lg"
               className="border-glow px-8 py-3 text-lg transition-all duration-300 hover:scale-105"
-              onClick={() => scrollToSection('contact')}
+              
             >
               Let's Connect
             </Button>
           </div>
 
           {/* Social Links */}
-          <div className={`flex justify-center space-x-6 mb-12 transition-all duration-1000 delay-700 ${isVisible ? 'animate-fade-in-delayed' : 'opacity-0'}`}>
+          <div className={`flex justify-center space-x-6 mb-12 transition-all duration-1000 delay-700 ${animationsVisible ? 'animate-rotate-in-dynamic' : 'animate-rotate-out-dynamic'}`}>
             {[
               { icon: Github, href: '#', label: 'GitHub' },
               { icon: Linkedin, href: '#', label: 'LinkedIn' },
@@ -90,14 +94,10 @@ const Hero = () => {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <button
-            onClick={() => scrollToSection('about')}
-            className="w-10 h-10 border border-primary/50 rounded-full flex items-center justify-center text-primary hover:bg-primary/10 transition-all duration-300"
-            aria-label="Scroll to next section"
-          >
+        <div className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 ${animationsVisible ? 'animate-bounce' : 'opacity-0'}`}>
+          <div className="w-10 h-10 border border-primary/50 rounded-full flex items-center justify-center text-primary">
             <ArrowDown size={20} />
-          </button>
+          </div>
         </div>
       </div>
     </section>
