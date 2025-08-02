@@ -1,109 +1,219 @@
-import { useEffect, useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Code2, Palette, Zap } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { gsap } from 'gsap';
+import { 
+  Code, 
+  Palette, 
+  Zap, 
+  Globe, 
+  Smartphone, 
+  Database,
+  Award,
+  Users,
+  Clock,
+  Target
+} from 'lucide-react';
 
 interface AboutProps {
-  isVisible?: boolean;
-  scrollDirection?: 'up' | 'down';
+  isActive: boolean;
+  sectionIndex: number;
   animationTrigger?: boolean;
 }
 
-const About = ({ isVisible = true, scrollDirection = 'down', animationTrigger = true }: AboutProps) => {
-  const [animationsVisible, setAnimationsVisible] = useState(false);
+const About = ({ isActive, sectionIndex, animationTrigger = false }: AboutProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const skillsRef = useRef<HTMLDivElement>(null);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    if (animationTrigger) {
-      setAnimationsVisible(true);
-    } else {
-      setAnimationsVisible(false);
+    if (animationTrigger && !hasAnimated.current && containerRef.current) {
+      hasAnimated.current = true;
+      
+      const tl = gsap.timeline();
+      
+      // Simple fade in for title
+      if (titleRef.current) {
+        tl.fromTo(titleRef.current,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }
+        );
+      }
+      
+      // Fade in subtitle
+      if (subtitleRef.current) {
+        tl.fromTo(subtitleRef.current,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+          "-=0.4"
+        );
+      }
+      
+      // Animate stats cards with simple stagger
+      if (statsRef.current) {
+        const statCards = statsRef.current.querySelectorAll('.stat-card');
+        tl.fromTo(statCards,
+          { opacity: 0, y: 30 },
+          { 
+            opacity: 1, y: 0,
+            duration: 0.6, 
+            stagger: 0.1,
+            ease: "power2.out" 
+          },
+          "-=0.2"
+        );
+      }
+      
+      // Animate skills with simple fade in
+      if (skillsRef.current) {
+        const skillItems = skillsRef.current.querySelectorAll('.skill-item');
+        tl.fromTo(skillItems,
+          { opacity: 0, x: -30 },
+          { 
+            opacity: 1, x: 0,
+            duration: 0.6, 
+            stagger: 0.1,
+            ease: "power2.out" 
+          },
+          "-=0.3"
+        );
+        
+        // Animate skill progress bars
+        const progressBars = skillsRef.current.querySelectorAll('.skill-progress');
+        tl.fromTo(progressBars,
+          { width: '0%' },
+          { 
+            width: (i, target) => target.getAttribute('data-level') + '%',
+            duration: 1.2, 
+            stagger: 0.1,
+            ease: "power2.out" 
+          },
+          "-=0.4"
+        );
+      }
+    } else if (!animationTrigger) {
+      hasAnimated.current = false;
     }
   }, [animationTrigger]);
 
-  const features = [
-    {
-      icon: Code2,
-      title: 'Full-Stack Development',
-      description: 'Expertise in modern frameworks and technologies to build scalable applications'
-    },
-    {
-      icon: Palette,
-      title: 'UI/UX Design',
-      description: 'Creating beautiful, intuitive interfaces that provide exceptional user experiences'
-    },
-    {
-      icon: Zap,
-      title: 'Performance Optimization',
-      description: 'Delivering lightning-fast applications with optimal performance and efficiency'
+  useEffect(() => {
+    if (!isActive) {
+      hasAnimated.current = false;
     }
+  }, [isActive]);
+
+  const stats = [
+    { icon: Award, label: "Years Experience", value: "5+" },
+    { icon: Users, label: "Happy Clients", value: "50+" },
+    { icon: Clock, label: "Projects Completed", value: "100+" },
+    { icon: Target, label: "Success Rate", value: "98%" }
+  ];
+
+  const skills = [
+    { name: "Frontend", icon: Code, level: 95, color: "from-blue-500 to-cyan-500" },
+    { name: "Backend", icon: Database, level: 90, color: "from-green-500 to-emerald-500" },
+    { name: "Mobile", icon: Smartphone, level: 85, color: "from-purple-500 to-pink-500" },
+    { name: "Design", icon: Palette, level: 80, color: "from-orange-500 to-red-500" },
+    { name: "DevOps", icon: Zap, level: 85, color: "from-indigo-500 to-purple-500" },
+    { name: "Cloud", icon: Globe, level: 90, color: "from-teal-500 to-blue-500" }
   ];
 
   return (
-    <section id="about" className="py-24 relative">
-      <div className="container mx-auto px-6">
-        <div className="max-w-4xl mx-auto">
-          {/* Section Header */}
-          <div className={`text-center mb-16 transition-all duration-1000 ${animationsVisible ? 'animate-spiral-in-dynamic' : 'animate-spiral-out-dynamic'}`}>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-glow">
-              About Me
+    <section ref={containerRef} className="relative min-h-screen overflow-hidden flex items-center justify-center">
+      {/* Subtle overlay effects */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-radial opacity-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/2 via-transparent to-white/2"></div>
+      </div>
+
+      <div className="container mx-auto px-6 py-20 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-16">
+            <h2 ref={titleRef} className="flex items-center justify-center text-5xl md:text-6xl font-bold mb-6">
+              <span className="block text-foreground">About</span>
+              <span className="block text-glow bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Me
+              </span>
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Passionate developer with a keen eye for design and a drive for innovation
+            <p ref={subtitleRef} className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              Passionate full-stack developer with expertise in modern web technologies, 
+              creating innovative solutions that drive business growth and user engagement.
             </p>
           </div>
 
-          {/* Main Content */}
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
-            {/* Text Content */}
-            <div className={`transition-all duration-1000 delay-300 ${animationsVisible ? 'animate-slide-in-left-dynamic' : 'animate-slide-out-left-dynamic'}`}>
-              <h3 className="text-2xl font-semibold mb-6 text-primary">
-                Crafting Digital Excellence
-              </h3>
-              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                I'm a creative developer who combines technical expertise with design sensibility 
-                to create memorable digital experiences. My journey spans across modern web technologies, 
-                user interface design, and system architecture.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Whether it's building responsive web applications, optimizing performance, 
-                or designing intuitive user interfaces, I approach every project with passion 
-                and attention to detail.
-              </p>
-            </div>
+          {/* Stats */}
+          <div ref={statsRef} className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+            {stats.map((stat, index) => (
+              <Card key={index} className="stat-card bg-card/50 backdrop-blur-sm border border-border/30 hover:border-primary/50 transition-all duration-300 hover-lift">
+                <CardContent className="p-6 text-center">
+                  <stat.icon className="w-8 h-8 text-primary mx-auto mb-3" />
+                  <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
 
-            {/* Visual Element */}
-            <div className={`relative transition-all duration-1000 delay-500 ${animationsVisible ? 'animate-slide-in-right-dynamic' : 'animate-slide-out-right-dynamic'}`}>
-              <div className="card-glass rounded-2xl p-8 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-radial opacity-50"></div>
-                <div className="relative z-10">
-                  <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mb-6 mx-auto">
-                    <Code2 size={40} className="text-primary" />
+          {/* Skills */}
+          <div ref={skillsRef} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold text-foreground mb-6">Technical Skills</h3>
+              {skills.slice(0, 3).map((skill, index) => (
+                <div key={skill.name} className="skill-item">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center space-x-3">
+                      <skill.icon className="w-5 h-5 text-primary" />
+                      <span className="font-medium text-foreground">{skill.name}</span>
+                    </div>
+                    <span className="text-sm text-muted-foreground">{skill.level}%</span>
                   </div>
-                  <h4 className="text-xl font-semibold text-center mb-4">5+ Years Experience</h4>
-                  <p className="text-muted-foreground text-center">
-                    Building innovative solutions across various industries and technologies
-                  </p>
+                  <div className="w-full bg-secondary rounded-full h-2">
+                    <div 
+                      className={`skill-progress h-2 bg-gradient-to-r ${skill.color} rounded-full transition-all duration-1000 ease-out`}
+                      data-level={skill.level}
+                      style={{ width: '0%' }}
+                    ></div>
+                  </div>
                 </div>
-              </div>
+              ))}
+            </div>
+            
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold text-foreground mb-6">Additional Skills</h3>
+              {skills.slice(3).map((skill, index) => (
+                <div key={skill.name} className="skill-item">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center space-x-3">
+                      <skill.icon className="w-5 h-5 text-primary" />
+                      <span className="font-medium text-foreground">{skill.name}</span>
+                    </div>
+                    <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                  </div>
+                  <div className="w-full bg-secondary rounded-full h-2">
+                    <div 
+                      className={`skill-progress h-2 bg-gradient-to-r ${skill.color} rounded-full transition-all duration-1000 ease-out`}
+                      data-level={skill.level}
+                      style={{ width: '0%' }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Feature Cards */}
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card
-                key={feature.title}
-                className={`card-glass p-6 text-center hover:scale-105 transition-all duration-500 hover:shadow-glow-primary ${
-                  animationsVisible ? 'animate-zoom-in-dynamic' : 'animate-zoom-out-dynamic'
-                }`}
-                style={{ animationDelay: `${700 + index * 200}ms` }}
-              >
-                <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4 mx-auto">
-                  <feature.icon size={32} className="text-primary" />
-                </div>
-                <h4 className="text-xl font-semibold mb-3">{feature.title}</h4>
-                <p className="text-muted-foreground">{feature.description}</p>
-              </Card>
-            ))}
+          {/* CTA */}
+          <div className="text-center mt-16">
+            <Button
+              size="lg"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-lg font-semibold transition-all duration-300 hover-scale"
+            >
+              Download Resume
+            </Button>
           </div>
         </div>
       </div>

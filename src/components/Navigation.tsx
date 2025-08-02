@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
+import { gsap } from 'gsap';
 
 interface NavigationProps {
   currentSection: number;
@@ -8,61 +9,117 @@ interface NavigationProps {
 }
 
 const Navigation = ({ currentSection, sections, onSectionChange }: NavigationProps) => {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
+  const navLinksRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const hasAnimated = useRef(false);
+
+  // Filter out Hero section (index 0) and only show navigation items for other sections
+  const navigationSections = sections.filter((_, index) => index !== 0);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    if (!hasAnimated.current && navRef.current) {
+      hasAnimated.current = true;
+      
+      const tl = gsap.timeline();
+      
+      // Animate logo
+      if (logoRef.current) {
+        tl.fromTo(logoRef.current,
+          { opacity: 0, x: -50, scale: 0.8 },
+          { opacity: 1, x: 0, scale: 1, duration: 0.8, ease: "back.out(1.7)" }
+        );
+      }
+      
+      // Animate nav links with stagger
+      if (navLinksRef.current) {
+        const links = navLinksRef.current.querySelectorAll('button');
+        tl.fromTo(links,
+          { opacity: 0, y: -30, scale: 0.8 },
+          { 
+            opacity: 1, y: 0, scale: 1, 
+            duration: 0.6, 
+            stagger: 0.1,
+            ease: "back.out(1.7)" 
+          },
+          "-=0.4"
+        );
+      }
+      
+      // Animate CTA button
+      if (ctaRef.current) {
+        tl.fromTo(ctaRef.current,
+          { opacity: 0, x: 50, scale: 0.8 },
+          { opacity: 1, x: 0, scale: 1, duration: 0.8, ease: "back.out(1.7)" },
+          "-=0.6"
+        );
+      }
+    }
   }, []);
 
+  // Animate active nav link
+  useEffect(() => {
+    if (navLinksRef.current) {
+      const links = navLinksRef.current.querySelectorAll('button');
+      links.forEach((link, index) => {
+        // Adjust index to account for filtered sections (add 1 since we filtered out Hero)
+        const actualSectionIndex = index + 1;
+        if (actualSectionIndex === currentSection) {
+          gsap.to(link, {
+            scale: 1.1,
+            duration: 0.3,
+            ease: "power2.out"
+          });
+        } else {
+          gsap.to(link, {
+            scale: 1,
+            duration: 0.3,
+            ease: "power2.out"
+          });
+        }
+      });
+    }
+  }, [currentSection]);
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? 'backdrop-blur-elegant bg-background/80 border-b border-border/50'
-          : 'bg-transparent'
-      }`}
-    >
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div 
-            className="text-2xl font-bold tracking-wider cursor-pointer text-glow"
-            onClick={() => onSectionChange(0)}
-          >
-            PORTFOLIO
+    <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 p-6">
+      <div className="container mx-auto flex items-center justify-between">
+        {/* Logo */}
+        <div ref={logoRef} className="flex items-center space-x-2">
+          <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center">
+            <span className="text-primary-foreground font-bold text-lg">D</span>
           </div>
+          <span className="text-xl font-bold text-foreground">Portfolio</span>
+        </div>
 
-          {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8">
-            {sections.slice(1, -1).map((section, index) => (
+        {/* Navigation Links */}
+        <div ref={navLinksRef} className="hidden md:flex items-center space-x-8">
+          {navigationSections.map((section, index) => {
+            // Adjust index to account for filtered sections (add 1 since we filtered out Hero)
+            const actualSectionIndex = index + 1;
+            return (
               <button
                 key={section.id}
-                onClick={() => onSectionChange(index + 1)}
-                className={`transition-all duration-300 relative group ${
-                  currentSection === index + 1
-                    ? 'text-primary' 
-                    : 'text-foreground/80 hover:text-primary'
+                onClick={() => onSectionChange(actualSectionIndex)}
+                className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-primary group ${
+                  actualSectionIndex === currentSection ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >
                 {section.name}
-                <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-300 ${
-                  currentSection === index + 1 ? 'w-full' : 'w-0 group-hover:w-full'
-                }`}></span>
+                <div className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-primary to-accent transition-all duration-300 ${
+                  actualSectionIndex === currentSection ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                }`}></div>
               </button>
-            ))}
-          </div>
+            );
+          })}
+        </div>
 
-          {/* CTA Button */}
-          <Button 
-            variant="outline" 
-            className="border-glow hover:bg-primary hover:text-primary-foreground transition-all duration-300"
-            onClick={() => onSectionChange(sections.length - 2)}
+        {/* CTA Button */}
+        <div ref={ctaRef}>
+          <Button
+            size="sm"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 font-medium transition-all duration-300 hover:scale-105 hover:shadow-glow-primary"
           >
             Get In Touch
           </Button>
