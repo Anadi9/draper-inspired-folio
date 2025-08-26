@@ -1,7 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowDown, Github, Linkedin, Mail, Sparkles, Zap, Star } from 'lucide-react';
 import { gsap } from 'gsap';
+import { motion } from 'framer-motion';
+import ComputersCanvas from './canvas/Computers';
+import ErrorBoundary from './ErrorBoundary';
 
 interface HeroProps {
   isActive: boolean;
@@ -18,27 +21,29 @@ const Hero = ({ isActive, sectionIndex }: HeroProps) => {
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
   const hasAnimated = useRef(false);
+  const [isModelReady, setIsModelReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (isActive && !hasAnimated.current && containerRef.current) {
       hasAnimated.current = true;
-      
+
       // Kill any existing animations
       gsap.killTweensOf(containerRef.current);
-      
+
       const tl = gsap.timeline();
-      
+
       // Animate background elements
       tl.fromTo(backgroundRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 1.5, ease: "power2.out" }
       );
-      
+
       // Animate title with text reveal effect
       if (titleRef.current) {
         const titleText = titleRef.current.textContent || '';
         titleRef.current.innerHTML = '';
-        
+
         // Create individual spans for each character
         titleText.split('').forEach((char, index) => {
           const span = document.createElement('span');
@@ -47,20 +52,20 @@ const Hero = ({ isActive, sectionIndex }: HeroProps) => {
           span.style.transform = 'translateY(50px)';
           titleRef.current?.appendChild(span);
         });
-        
+
         const titleSpans = titleRef.current.querySelectorAll('span');
         tl.fromTo(titleSpans,
           { opacity: 0, y: 50, rotationX: -90 },
-          { 
-            opacity: 1, y: 0, rotationX: 0, 
-            duration: 0.8, 
+          {
+            opacity: 1, y: 0, rotationX: 0,
+            duration: 0.8,
             stagger: 0.05,
-            ease: "back.out(1.7)" 
+            ease: "back.out(1.7)"
           },
           "-=0.5"
         );
       }
-      
+
       // Animate subtitle
       if (subtitleRef.current) {
         tl.fromTo(subtitleRef.current,
@@ -69,51 +74,51 @@ const Hero = ({ isActive, sectionIndex }: HeroProps) => {
           "-=0.3"
         );
       }
-      
+
       // Animate buttons with stagger
       if (buttonsRef.current) {
         const buttons = buttonsRef.current.querySelectorAll('button');
         tl.fromTo(buttons,
           { opacity: 0, y: 40, scale: 0.5 },
-          { 
-            opacity: 1, y: 0, scale: 1, 
-            duration: 0.6, 
+          {
+            opacity: 1, y: 0, scale: 1,
+            duration: 0.6,
             stagger: 0.1,
-            ease: "back.out(1.7)" 
+            ease: "back.out(1.7)"
           },
           "-=0.2"
         );
       }
-      
+
       // Animate social links with rotation
       if (socialRef.current) {
         const socialLinks = socialRef.current.querySelectorAll('a');
         tl.fromTo(socialLinks,
           { opacity: 0, rotation: -180, scale: 0, y: 20 },
-          { 
-            opacity: 1, rotation: 0, scale: 1, y: 0, 
-            duration: 0.8, 
+          {
+            opacity: 1, rotation: 0, scale: 1, y: 0,
+            duration: 0.8,
             stagger: 0.1,
-            ease: "back.out(1.7)" 
+            ease: "back.out(1.7)"
           },
           "-=0.1"
         );
       }
-      
+
       // Animate floating particles
       if (particlesRef.current) {
         const particles = particlesRef.current.children;
         gsap.fromTo(particles,
           { opacity: 0, scale: 0, y: 100, rotation: 0 },
-          { 
-            opacity: 1, scale: 1, y: 0, rotation: 360, 
-            duration: 1.2, 
+          {
+            opacity: 1, scale: 1, y: 0, rotation: 360,
+            duration: 1.2,
             stagger: 0.2,
             ease: "back.out(1.7)",
             delay: 0.5
           }
         );
-        
+
         // Add floating animation to particles
         gsap.to(particles, {
           y: -20,
@@ -124,19 +129,19 @@ const Hero = ({ isActive, sectionIndex }: HeroProps) => {
           ease: "power2.inOut"
         });
       }
-      
+
       // Animate scroll indicator
       if (scrollIndicatorRef.current) {
         tl.fromTo(scrollIndicatorRef.current,
           { opacity: 0, y: 30, scale: 0.5 },
-          { 
-            opacity: 1, y: 0, scale: 1, 
-            duration: 0.8, 
+          {
+            opacity: 1, y: 0, scale: 1,
+            duration: 0.8,
             ease: "back.out(1.7)",
             delay: 1
           }
         );
-        
+
         // Add floating animation
         gsap.to(scrollIndicatorRef.current, {
           y: -15,
@@ -147,7 +152,7 @@ const Hero = ({ isActive, sectionIndex }: HeroProps) => {
           delay: 1.5
         });
       }
-      
+
       return () => {
         tl.kill();
       };
@@ -161,16 +166,61 @@ const Hero = ({ isActive, sectionIndex }: HeroProps) => {
     }
   }, [isActive]);
 
+  // Handle 3D model ready state
+  const handleModelReady = () => {
+    console.log('handleModelReady called - setting states');
+    setIsModelReady(true);
+    setIsLoading(false);
+  };
+
+  // Fallback timeout in case model loading takes too long
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        console.warn('3D model loading timeout, proceeding anyway');
+        setIsModelReady(true);
+        setIsLoading(false);
+      }
+    }, 10000); // 10 second timeout
+
+    return () => clearTimeout(timeout);
+  }, [isLoading]);
+
+  // Show loading state while 3D model is loading
+  // if (isLoading) {
+  //   return (
+  //     <section className="relative min-h-screen flex items-center justify-center">
+  //       <div className="absolute inset-0 z-0">
+  //         <ErrorBoundary>
+  //           <ComputersCanvas onModelReady={handleModelReady} />
+  //         </ErrorBoundary>
+  //       </div>
+  //       <div className="relative z-20 flex items-center justify-center">
+  //         <div className="text-center">
+  //           <div className="w-20 h-20 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>        
+  //         </div>
+  //       </div>
+  //     </section>
+  //   );
+  // }
+
   return (
     <section ref={containerRef} className="relative min-h-screen flex items-center justify-center">
+      {/* 3D Computer Canvas Background */}
+      <div className="absolute inset-0 z-0">
+        <ErrorBoundary>
+          <ComputersCanvas onModelReady={handleModelReady} />
+        </ErrorBoundary>
+      </div>
+      
       {/* Subtle overlay effects */}
-      <div ref={backgroundRef} className="absolute inset-0">
+      <div ref={backgroundRef} className="absolute inset-0 z-10">
         <div className="absolute inset-0 bg-gradient-radial opacity-10"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-white/2 via-transparent to-white/2"></div>
       </div>
-      
+
       {/* Floating particles */}
-      <div ref={particlesRef} className="absolute inset-0 pointer-events-none">
+      <div ref={particlesRef} className="absolute inset-0 pointer-events-none z-15">
         {[...Array(12)].map((_, i) => (
           <div
             key={i}
@@ -192,22 +242,22 @@ const Hero = ({ isActive, sectionIndex }: HeroProps) => {
         ))}
       </div>
 
-      <div className="container mx-auto px-6 text-center relative z-10">
+      <div className="container mx-auto px-6 text-center relative z-20">
         {/* Main heading with animated text */}
-        <h1 ref={titleRef} className="flex items-center justify-center text-6xl md:text-8xl font-bold mt-20 mb-8 tracking-tight">
+        <h1 className="flex items-center justify-center text-6xl md:text-8xl font-bold mt-20 mb-8 tracking-tight">
           <span className="block text-foreground">Creative</span>
           <span className="block text-glow bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
             Developer
           </span>
         </h1>
-        
+
         {/* Subtitle */}
-        <p ref={subtitleRef} className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-          Crafting extraordinary digital experiences with cutting-edge technology and innovative design
+        <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
+          Engineering sleek, scalable, and intelligent digital experiences powered by innovation.
         </p>
 
         {/* CTA Buttons */}
-        <div ref={buttonsRef} className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+        {/* <div ref={buttonsRef} className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
           <Button
             size="lg"
             className="group bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-glow-primary relative overflow-hidden"
@@ -223,10 +273,10 @@ const Hero = ({ isActive, sectionIndex }: HeroProps) => {
             <span className="relative z-10">Let's Connect</span>
             <div className="absolute inset-0 bg-gradient-to-r from-accent/20 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </Button>
-        </div>
+        </div> */}
 
         {/* Social Links */}
-        <div ref={socialRef} className="flex justify-center space-x-8 mb-16">
+        <div className="flex justify-center space-x-8 mb-16">
           {[
             { icon: Github, href: '#', label: 'GitHub' },
             { icon: Linkedin, href: '#', label: 'LinkedIn' },
@@ -244,11 +294,23 @@ const Hero = ({ isActive, sectionIndex }: HeroProps) => {
         </div>
 
         {/* Scroll indicator */}
-        {/* <div ref={scrollIndicatorRef} className="absolute bottom-12 left-1/2 transform -translate-x-1/2">
-          <div className="w-12 h-12 border-2 border-primary/50 rounded-full flex items-center justify-center text-primary hover:border-primary hover:scale-110 transition-all duration-300 cursor-pointer">
-            <ArrowDown size={24} />
-          </div>
-        </div> */}
+        <div ref={scrollIndicatorRef} className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20">
+          <a href="#about">
+            <div className="w-[35px] h-[64px] rounded-3xl border-4 border-primary/50 flex justify-center items-start p-2 hover:border-primary hover:scale-110 transition-all duration-300 cursor-pointer">
+              <motion.div
+                animate={{
+                  y: [0, 24, 0],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  repeatType: "loop",
+                }}
+                className="w-3 h-3 rounded-full bg-primary mb-1"
+              />
+            </div>
+          </a>
+        </div>
       </div>
     </section>
   );
