@@ -52,7 +52,7 @@ const FullScreenLoader = ({ onLoadingComplete }: FullScreenLoaderProps) => {
       </div>
 
       {/* Main Loader */}
-      <div className="relative z-10">
+      <div className="absolute inset-0 flex items-center justify-center z-10">
         <div className="loader">
           <span>
             <span />
@@ -76,10 +76,7 @@ const FullScreenLoader = ({ onLoadingComplete }: FullScreenLoaderProps) => {
       {/* Custom CSS for animations */}
       <style>{`
         .loader {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
+          position: relative;
           animation: speeder 0.4s linear infinite;
         }
 

@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { ArrowDown, Github, Linkedin, Mail, Sparkles, Zap, Star } from 'lucide-react';
+import { Github, Linkedin, Mail } from 'lucide-react';
 import { gsap } from 'gsap';
 import { motion } from 'framer-motion';
-import ComputersCanvas from './canvas/Computers';
-import ErrorBoundary from './ErrorBoundary';
 
 interface HeroProps {
   isActive: boolean;
@@ -13,149 +10,12 @@ interface HeroProps {
 
 const Hero = ({ isActive, sectionIndex }: HeroProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const buttonsRef = useRef<HTMLDivElement>(null);
-  const socialRef = useRef<HTMLDivElement>(null);
-  const particlesRef = useRef<HTMLDivElement>(null);
-  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
-  const backgroundRef = useRef<HTMLDivElement>(null);
   const hasAnimated = useRef(false);
-  const [isModelReady, setIsModelReady] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (isActive && !hasAnimated.current && containerRef.current) {
       hasAnimated.current = true;
-
-      // Kill any existing animations
-      gsap.killTweensOf(containerRef.current);
-
-      const tl = gsap.timeline();
-
-      // Animate background elements
-      tl.fromTo(backgroundRef.current,
-        { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 1.5, ease: "power2.out" }
-      );
-
-      // Animate title with text reveal effect
-      if (titleRef.current) {
-        const titleText = titleRef.current.textContent || '';
-        titleRef.current.innerHTML = '';
-
-        // Create individual spans for each character
-        titleText.split('').forEach((char, index) => {
-          const span = document.createElement('span');
-          span.textContent = char === ' ' ? '\u00A0' : char;
-          span.style.opacity = '0';
-          span.style.transform = 'translateY(50px)';
-          titleRef.current?.appendChild(span);
-        });
-
-        const titleSpans = titleRef.current.querySelectorAll('span');
-        tl.fromTo(titleSpans,
-          { opacity: 0, y: 50, rotationX: -90 },
-          {
-            opacity: 1, y: 0, rotationX: 0,
-            duration: 0.8,
-            stagger: 0.05,
-            ease: "back.out(1.7)"
-          },
-          "-=0.5"
-        );
-      }
-
-      // Animate subtitle
-      if (subtitleRef.current) {
-        tl.fromTo(subtitleRef.current,
-          { opacity: 0, y: 30, scale: 0.8 },
-          { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "back.out(1.7)" },
-          "-=0.3"
-        );
-      }
-
-      // Animate buttons with stagger
-      if (buttonsRef.current) {
-        const buttons = buttonsRef.current.querySelectorAll('button');
-        tl.fromTo(buttons,
-          { opacity: 0, y: 40, scale: 0.5 },
-          {
-            opacity: 1, y: 0, scale: 1,
-            duration: 0.6,
-            stagger: 0.1,
-            ease: "back.out(1.7)"
-          },
-          "-=0.2"
-        );
-      }
-
-      // Animate social links with rotation
-      if (socialRef.current) {
-        const socialLinks = socialRef.current.querySelectorAll('a');
-        tl.fromTo(socialLinks,
-          { opacity: 0, rotation: -180, scale: 0, y: 20 },
-          {
-            opacity: 1, rotation: 0, scale: 1, y: 0,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: "back.out(1.7)"
-          },
-          "-=0.1"
-        );
-      }
-
-      // Animate floating particles
-      if (particlesRef.current) {
-        const particles = particlesRef.current.children;
-        gsap.fromTo(particles,
-          { opacity: 0, scale: 0, y: 100, rotation: 0 },
-          {
-            opacity: 1, scale: 1, y: 0, rotation: 360,
-            duration: 1.2,
-            stagger: 0.2,
-            ease: "back.out(1.7)",
-            delay: 0.5
-          }
-        );
-
-        // Add floating animation to particles
-        gsap.to(particles, {
-          y: -20,
-          duration: 3,
-          yoyo: true,
-          repeat: -1,
-          stagger: 0.3,
-          ease: "power2.inOut"
-        });
-      }
-
-      // Animate scroll indicator
-      if (scrollIndicatorRef.current) {
-        tl.fromTo(scrollIndicatorRef.current,
-          { opacity: 0, y: 30, scale: 0.5 },
-          {
-            opacity: 1, y: 0, scale: 1,
-            duration: 0.8,
-            ease: "back.out(1.7)",
-            delay: 1
-          }
-        );
-
-        // Add floating animation
-        gsap.to(scrollIndicatorRef.current, {
-          y: -15,
-          duration: 2,
-          yoyo: true,
-          repeat: -1,
-          ease: "power2.inOut",
-          delay: 1.5
-        });
-      }
-
-      return () => {
-        tl.kill();
-      };
+      // Quantum animations are handled by CSS and Framer Motion
     }
   }, [isActive]);
 
@@ -165,26 +25,6 @@ const Hero = ({ isActive, sectionIndex }: HeroProps) => {
       hasAnimated.current = false;
     }
   }, [isActive]);
-
-  // Handle 3D model ready state
-  const handleModelReady = () => {
-    console.log('handleModelReady called - setting states');
-    setIsModelReady(true);
-    setIsLoading(false);
-  };
-
-  // Fallback timeout in case model loading takes too long
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (isLoading) {
-        console.warn('3D model loading timeout, proceeding anyway');
-        setIsModelReady(true);
-        setIsLoading(false);
-      }
-    }, 10000); // 10 second timeout
-
-    return () => clearTimeout(timeout);
-  }, [isLoading]);
 
   // Show loading state while 3D model is loading
   // if (isLoading) {
@@ -204,114 +44,127 @@ const Hero = ({ isActive, sectionIndex }: HeroProps) => {
   //   );
   // }
 
-  return (
-    <section ref={containerRef} className="relative min-h-screen flex items-center justify-center">
-      {/* 3D Computer Canvas Background */}
-      <div className="absolute inset-0 z-0">
-        <ErrorBoundary>
-          <ComputersCanvas onModelReady={handleModelReady} />
-        </ErrorBoundary>
-      </div>
-      
-      {/* Subtle overlay effects */}
-      <div ref={backgroundRef} className="absolute inset-0 z-10">
-        <div className="absolute inset-0 bg-gradient-radial opacity-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-white/2 via-transparent to-white/2"></div>
-      </div>
-
-      {/* Floating particles */}
-      <div ref={particlesRef} className="absolute inset-0 pointer-events-none z-15">
-        {[...Array(12)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute"
-            style={{
-              left: `${10 + (i * 7) % 80}%`,
-              top: `${20 + (i * 11) % 60}%`,
-              animationDelay: `${i * 0.2}s`
-            }}
+    return (
+    <section ref={containerRef} className="relative min-h-screen overflow-hidden">
+      {/* Main Content */}
+      <div className="relative z-10 flex items-center justify-center min-h-screen">
+        <div className="text-center max-w-4xl mx-auto px-6">
+          {/* Clean Developer Badge */}
+          <motion.div
+            className="inline-flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/20 rounded-full text-white text-sm font-medium mb-12 backdrop-blur-sm"
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.8, ease: "backOut" }}
+            whileHover={{ scale: 1.02, borderColor: 'rgba(255, 255, 255, 0.4)' }}
           >
-            {i % 3 === 0 ? (
-              <Sparkles className="w-4 h-4 text-primary/60" />
-            ) : i % 3 === 1 ? (
-              <Zap className="w-3 h-3 text-accent/50" />
-            ) : (
-              <Star className="w-2 h-2 text-primary/40" />
-            )}
-          </div>
-        ))}
-      </div>
+            <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+            <span className="font-medium">Full Stack Developer</span>
+            <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+          </motion.div>
 
-      <div className="container mx-auto px-6 text-center relative z-20">
-        {/* Main heading with animated text */}
-        <h1 className="flex items-center justify-center text-6xl md:text-8xl font-bold mt-20 mb-8 tracking-tight">
-          <span className="block text-foreground">Creative</span>
-          <span className="block text-glow bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
-            Developer
-          </span>
-        </h1>
-
-        {/* Subtitle */}
-        <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-          Engineering sleek, scalable, and intelligent digital experiences powered by innovation.
-        </p>
-
-        {/* CTA Buttons */}
-        {/* <div ref={buttonsRef} className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
-          <Button
-            size="lg"
-            className="group bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-glow-primary relative overflow-hidden"
+          {/* Name with Enhanced Typography */}
+          <motion.div
+            className="relative mb-8"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.2 }}
           >
-            <span className="relative z-10">View My Work</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            className="group border-glow px-10 py-4 text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-glow-accent relative overflow-hidden"
+            <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 to-orange-600/20 blur-3xl"></div>
+            <h1 className="relative text-6xl md:text-8xl font-black text-white tracking-tight">
+              <span className="bg-gradient-to-r from-red-400 via-white to-orange-400 bg-clip-text text-transparent">
+                Anadi Thakur
+              </span>
+            </h1>
+          </motion.div>
+
+          {/* Enhanced Tagline */}
+          <motion.p
+            className="text-xl md:text-2xl text-gray-300 mb-16 max-w-3xl mx-auto leading-relaxed font-light"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <span className="relative z-10">Let's Connect</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-accent/20 to-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </Button>
-        </div> */}
+            <span className="text-red-400 font-medium">Crafting</span> powerful solutions through{' '}
+            <span className="text-orange-400 font-medium">robust code</span> and{' '}
+            <span className="text-red-400 font-medium">strategic design</span>
+          </motion.p>
 
-        {/* Social Links */}
-        <div className="flex justify-center space-x-8 mb-16">
-          {[
-            { icon: Github, href: '#', label: 'GitHub' },
-            { icon: Linkedin, href: '#', label: 'LinkedIn' },
-            { icon: Mail, href: '#', label: 'Email' }
-          ].map((social, index) => (
-            <a
-              key={social.label}
-              href={social.href}
-              className="group w-16 h-16 bg-card/30 backdrop-blur-sm border border-border/30 rounded-2xl flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 transition-all duration-300 hover:scale-110 hover:shadow-glow-primary hover:rotate-3"
-              aria-label={social.label}
-            >
-              <social.icon size={24} className="group-hover:scale-110 transition-transform duration-300" />
-            </a>
-          ))}
-        </div>
+          {/* Enhanced Social Links */}
+          <motion.div
+            className="flex justify-center gap-8 mb-20"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            {[
+              { icon: Github, href: '#', label: 'GitHub', color: 'hover:text-gray-300', bg: 'hover:bg-gray-800/30' },
+              { icon: Linkedin, href: '#', label: 'LinkedIn', color: 'hover:text-red-400', bg: 'hover:bg-red-500/20' },
+              { icon: Mail, href: '#', label: 'Email', color: 'hover:text-orange-400', bg: 'hover:bg-orange-500/20' }
+            ].map((social, index) => (
+              <motion.a
+                key={social.label}
+                href={social.href}
+                className={`group p-4 bg-white/5 border border-white/10 rounded-xl text-gray-400 transition-all duration-500 backdrop-blur-sm ${social.color} ${social.bg}`}
+                whileHover={{ 
+                  y: -8, 
+                  scale: 1.1,
+                  boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
+                }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, y: 20, rotateY: -90 }}
+                animate={{ opacity: 1, y: 0, rotateY: 0 }}
+                transition={{ 
+                  delay: 0.8 + index * 0.15,
+                  duration: 0.6,
+                  ease: "backOut"
+                }}
+              >
+                <social.icon size={28} className="drop-shadow-sm" />
+              </motion.a>
+            ))}
+          </motion.div>
 
-        {/* Scroll indicator */}
-        <div ref={scrollIndicatorRef} className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20">
-          <a href="#about">
-            <div className="w-[35px] h-[64px] rounded-3xl border-4 border-primary/50 flex justify-center items-start p-2 hover:border-primary hover:scale-110 transition-all duration-300 cursor-pointer">
+          {/* Enhanced Scroll Indicator */}
+          <motion.div
+            className="absolute bottom-12 left-1/2 transform -translate-x-1/2"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.5, duration: 0.8 }}
+          >
+            <a href="#about">
               <motion.div
-                animate={{
-                  y: [0, 24, 0],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  repeatType: "loop",
-                }}
-                className="w-3 h-3 rounded-full bg-primary mb-1"
-              />
-            </div>
-          </a>
+                className="group relative"
+                whileHover={{ scale: 1.1 }}
+              >
+                <div className="w-8 h-12 border-2 border-gray-400/50 rounded-full flex justify-center backdrop-blur-sm">
+                  <motion.div
+                    className="w-1.5 h-4 bg-gradient-to-b from-red-400 to-orange-400 rounded-full mt-2"
+                    animate={{ y: [0, 16, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                </div>
+                <div className="absolute inset-0 border-2 border-red-400/20 rounded-full animate-ping"></div>
+              </motion.div>
+            </a>
+          </motion.div>
         </div>
       </div>
+
+      {/* Custom CSS for enhanced effects */}
+      <style>{`
+        .drop-shadow-glow {
+          filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+        }
+        
+        .shadow-glow {
+          box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
+        }
+      `}</style>
     </section>
   );
 };

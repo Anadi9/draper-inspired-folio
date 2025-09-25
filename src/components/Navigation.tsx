@@ -87,10 +87,10 @@ const Navigation = ({ currentSection, sections, onSectionChange }: NavigationPro
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo */}
         <div ref={logoRef} className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-lg">D</span>
+          <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-orange-600 rounded-xl flex items-center justify-center">
+            <span className="text-white font-bold text-lg">A</span>
           </div>
-          <span className="text-xl font-bold text-foreground">Portfolio</span>
+          <span className="text-xl font-bold text-white">Anadi</span>
         </div>
 
         {/* Navigation Links */}
@@ -102,12 +102,12 @@ const Navigation = ({ currentSection, sections, onSectionChange }: NavigationPro
               <button
                 key={section.id}
                 onClick={() => onSectionChange(actualSectionIndex)}
-                className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-primary group ${
-                  actualSectionIndex === currentSection ? 'text-primary' : 'text-muted-foreground'
+                className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-red-400 group ${
+                  actualSectionIndex === currentSection ? 'text-red-400' : 'text-gray-300'
                 }`}
               >
                 {section.name}
-                <div className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-primary to-accent transition-all duration-300 ${
+                <div className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-orange-500 transition-all duration-300 ${
                   actualSectionIndex === currentSection ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                 }`}></div>
               </button>
@@ -119,7 +119,7 @@ const Navigation = ({ currentSection, sections, onSectionChange }: NavigationPro
         <div ref={ctaRef}>
           <Button
             size="sm"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 font-medium transition-all duration-300 hover:scale-105 hover:shadow-glow-primary"
+            className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white px-6 py-2 font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg"
           >
             Get In Touch
           </Button>

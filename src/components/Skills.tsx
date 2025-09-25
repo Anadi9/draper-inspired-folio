@@ -156,7 +156,7 @@ const Skills = ({ isVisible = true, scrollDirection = 'down', animationTrigger =
     {
       title: 'Frontend',
       icon: Code2,
-      color: 'from-blue-500 to-cyan-500',
+      color: 'from-blue-500 to-purple-500',
       skills: [
         { name: 'React', level: 95 },
         { name: 'TypeScript', level: 80 },
@@ -170,7 +170,7 @@ const Skills = ({ isVisible = true, scrollDirection = 'down', animationTrigger =
     {
       title: 'Backend',
       icon: Database,
-      color: 'from-green-500 to-emerald-500',
+      color: 'from-blue-500 to-purple-500',
       skills: [
         { name: 'Node.js', level: 80 },
         { name: 'Express', level: 85 },
@@ -182,7 +182,7 @@ const Skills = ({ isVisible = true, scrollDirection = 'down', animationTrigger =
     {
       title: 'DevOps & Tools',
       icon: Server,
-      color: 'from-purple-500 to-pink-500',
+      color: 'from-blue-500 to-purple-500',
       skills: [
         { name: 'GCP', level: 80 },
         { name: 'Docker', level: 80 },
@@ -195,37 +195,6 @@ const Skills = ({ isVisible = true, scrollDirection = 'down', animationTrigger =
 
   return (
     <section ref={containerRef} id="skills" className="py-24 relative min-h-screen overflow-hidden">
-      {/* Subtle overlay effects */}
-      <div ref={backgroundRef} className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-radial opacity-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-white/2 via-transparent to-white/2"></div>
-      </div>
-      
-      {/* Floating particles */}
-      <div ref={particlesRef} className="absolute inset-0 pointer-events-none">
-        {[...Array(8)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute"
-            style={{
-              left: `${20 + (i * 10) % 60}%`,
-              top: `${30 + (i * 15) % 40}%`,
-              animationDelay: `${i * 0.4}s`
-            }}
-          >
-            {i % 4 === 0 ? (
-              <Code2 className="w-6 h-6 text-primary/40" />
-            ) : i % 4 === 1 ? (
-              <Database className="w-5 h-5 text-accent/50" />
-            ) : i % 4 === 2 ? (
-              <Server className="w-4 h-4 text-primary/30" />
-            ) : (
-              <Cpu className="w-5 h-5 text-accent/40" />
-            )}
-          </div>
-        ))}
-      </div>
-
       <div className="container mx-auto px-6 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">

@@ -177,37 +177,6 @@ const Contact = ({ isVisible = true, scrollDirection = 'down', animationTrigger 
 
   return (
     <section ref={containerRef} id="contact" className="relative min-h-screen overflow-hidden">
-      {/* Subtle overlay effects */}
-      <div ref={backgroundRef} className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-radial opacity-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-white/2 via-transparent to-white/2"></div>
-      </div>
-      
-      {/* Floating particles */}
-      <div ref={particlesRef} className="absolute inset-0 pointer-events-none">
-        {[...Array(8)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute"
-            style={{
-              left: `${20 + (i * 10) % 60}%`,
-              top: `${30 + (i * 15) % 40}%`,
-              animationDelay: `${i * 0.4}s`
-            }}
-          >
-            {i % 4 === 0 ? (
-              <MessageCircle className="w-5 h-5 text-primary/40" />
-            ) : i % 4 === 1 ? (
-              <Mail className="w-4 h-4 text-accent/50" />
-            ) : i % 4 === 2 ? (
-              <Star className="w-3 h-3 text-primary/30" />
-            ) : (
-              <Heart className="w-4 h-4 text-red-400/40" />
-            )}
-          </div>
-        ))}
-      </div>
-
       <div className="container-fluid pt-24 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">

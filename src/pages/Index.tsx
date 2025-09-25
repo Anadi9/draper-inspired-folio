@@ -8,6 +8,7 @@ import Skills from '@/components/Skills';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import CustomCursor from '@/components/CustomCursor';
+import { motion } from 'framer-motion';
 
 const Index = () => {
   const [currentSection, setCurrentSection] = useState(0);
@@ -23,36 +24,36 @@ const Index = () => {
       id: 'hero', 
       component: Hero, 
       name: 'Hero',
-      bgColor: 'from-gray-950 via-slate-950 to-gray-950',
-      accentColor: 'from-blue-500 to-purple-500'
+      bgColor: 'from-gray-900 via-zinc-900 to-black',
+      accentColor: 'from-red-600 to-orange-600'
     },
     { 
       id: 'about', 
       component: About, 
       name: 'About',
-      bgColor: 'from-slate-950 via-gray-900 to-slate-950',
-      accentColor: 'from-emerald-400 to-teal-400'
+      bgColor: 'from-gray-900 via-zinc-900 to-black',
+      accentColor: 'from-blue-600 to-cyan-500'
     },
     { 
       id: 'projects', 
       component: Projects, 
       name: 'Projects',
-      bgColor: 'from-zinc-950 via-slate-900 to-zinc-950',
-      accentColor: 'from-orange-400 to-red-400'
+      bgColor: 'from-gray-900 via-zinc-900 to-black',
+      accentColor: 'from-purple-600 to-pink-500'
     },
     { 
       id: 'skills', 
       component: Skills, 
       name: 'Skills',
-      bgColor: 'from-gray-950 via-zinc-900 to-gray-950',
-      accentColor: 'from-indigo-400 to-blue-400'
+      bgColor: 'from-gray-900 via-zinc-900 to-black',
+      accentColor: 'from-green-600 to-emerald-500'
     },
     { 
       id: 'contact', 
       component: Contact, 
       name: 'Contact',
-      bgColor: 'from-slate-950 via-zinc-950 to-slate-950',
-      accentColor: 'from-violet-400 to-pink-400'
+      bgColor: 'from-gray-900 via-zinc-900 to-black',
+      accentColor: 'from-indigo-600 to-blue-500'
     },
   ];
 
@@ -262,7 +263,7 @@ const Index = () => {
 
   return (
     <div ref={containerRef} className="fixed inset-0 overflow-hidden custom-cursor-active">
-      {/* Dynamic Background */}
+      {/* Fixed Background for entire portfolio */}
       <div className="fixed inset-0 z-0">
         <div 
           className={`absolute inset-0 bg-gradient-to-br ${sections[currentSection].bgColor} transition-all duration-1000 ease-in-out`}
@@ -270,27 +271,54 @@ const Index = () => {
         <div 
           className={`absolute inset-0 bg-gradient-to-r ${sections[currentSection].accentColor} opacity-5 transition-all duration-1000 ease-in-out`}
         />
-        {/* Subtle dot pattern */}
-        <div className="absolute inset-0 opacity-3">
-          <div 
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
-              backgroundSize: '80px 80px',
-              color: sections[currentSection].accentColor.includes('blue') ? '#6366f1' : 
-                     sections[currentSection].accentColor.includes('emerald') ? '#34d399' :
-                     sections[currentSection].accentColor.includes('orange') ? '#fb923c' :
-                     sections[currentSection].accentColor.includes('indigo') ? '#818cf8' : '#c084fc'
-            }}
-          />
-        </div>
+        {/* Fixed background pattern overlay */}
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: `
+            radial-gradient(circle at 20% 20%, rgba(220, 38, 38, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(245, 101, 101, 0.3) 0%, transparent 50%),
+            linear-gradient(45deg, transparent 49%, rgba(220, 38, 38, 0.1) 50%, transparent 51%),
+            linear-gradient(-45deg, transparent 49%, rgba(245, 101, 101, 0.1) 50%, transparent 51%)
+          `,
+          backgroundSize: '100px 100px, 150px 150px, 50px 50px, 50px 50px'
+        }}></div>
+        {/* Fixed gradient orbs */}
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-red-600/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-600/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        {/* Floating Code Elements with Glow - Fixed */}
+        {currentSection === 0 && (
+          <div className="absolute inset-0 overflow-hidden">
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute text-red-400/30 font-mono text-sm drop-shadow-glow"
+                initial={{ 
+                  x: Math.random() * window.innerWidth,
+                  y: Math.random() * window.innerHeight,
+                  opacity: 0 
+                }}
+                animate={{ 
+                  y: [null, -150],
+                  opacity: [0, 1, 0],
+                  scale: [0.8, 1, 0.8]
+                }}
+                transition={{
+                  duration: 10 + Math.random() * 5,
+                  repeat: Infinity,
+                  delay: i * 1.5,
+                  ease: "easeInOut"
+                }}
+              >
+                {['const', 'function', 'return', 'async', 'await', 'export', 'class', 'interface'][i]}
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
 
       <CustomCursor 
-        isVisible={true} 
-        enableMagnetic={true}
-        enableParticles={true}
-        enableTrail={true}
+        isVisible={true}
+        themeColor={sections[currentSection].accentColor}
+        currentSection={currentSection}
       />
       
       <Navigation currentSection={currentSection} sections={sections} onSectionChange={goToSection} />

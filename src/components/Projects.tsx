@@ -158,37 +158,6 @@ const Projects = ({ isVisible = true, scrollDirection = 'down', animationTrigger
 
   return (
     <section ref={containerRef} id="projects" className="py-24 relative min-h-screen overflow-hidden">
-      {/* Subtle overlay effects */}
-      <div ref={backgroundRef} className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-radial opacity-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-white/2 via-transparent to-white/2"></div>
-      </div>
-      
-      {/* Floating particles */}
-      <div ref={particlesRef} className="absolute inset-0 pointer-events-none">
-        {[...Array(10)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute"
-            style={{
-              left: `${15 + (i * 8) % 70}%`,
-              top: `${25 + (i * 13) % 50}%`,
-              animationDelay: `${i * 0.3}s`
-            }}
-          >
-            {i % 4 === 0 ? (
-              <Code className="w-5 h-5 text-primary/40" />
-            ) : i % 4 === 1 ? (
-              <Rocket className="w-4 h-4 text-accent/50" />
-            ) : i % 4 === 2 ? (
-              <Star className="w-3 h-3 text-primary/30" />
-            ) : (
-              <Sparkles className="w-4 h-4 text-accent/40" />
-            )}
-          </div>
-        ))}
-      </div>
-
       <div className="container mx-auto px-6 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
