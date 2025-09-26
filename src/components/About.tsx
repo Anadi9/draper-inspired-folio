@@ -202,6 +202,10 @@ const About = ({ isActive, sectionIndex, animationTrigger = false }: AboutProps)
           <div className="text-center">
             <Button
               size="lg"
+              onClick={() => {
+                // Open resume in new tab for preview
+                window.open('/src/resume/AnadiResume.pdf', '_blank');
+              }}
               className="group bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-10 py-4 text-lg font-semibold transition-all duration-500 hover:scale-105 hover:shadow-2xl rounded-2xl"
             >
               <Download className="w-5 h-5 mr-3 group-hover:animate-bounce" />

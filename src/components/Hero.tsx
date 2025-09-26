@@ -97,13 +97,15 @@ const Hero = ({ isActive, sectionIndex }: HeroProps) => {
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             {[
-              { icon: Github, href: '#', label: 'GitHub', color: 'hover:text-gray-300', bg: 'hover:bg-gray-800/30' },
-              { icon: Linkedin, href: '#', label: 'LinkedIn', color: 'hover:text-red-400', bg: 'hover:bg-red-500/20' },
-              { icon: Mail, href: '#', label: 'Email', color: 'hover:text-orange-400', bg: 'hover:bg-orange-500/20' }
+              { icon: Github, href: 'https://github.com/Anadi9', label: 'GitHub', color: 'hover:text-gray-300', bg: 'hover:bg-gray-800/30', target: '_blank', rel: 'noopener noreferrer' },
+              { icon: Linkedin, href: 'https://www.linkedin.com/in/anadi-thakur-92163316b/', label: 'LinkedIn', color: 'hover:text-red-400', bg: 'hover:bg-red-500/20', target: '_blank', rel: 'noopener noreferrer' },
+              { icon: Mail, href: 'mailto:anadithakur99@gmail.com', label: 'Email', color: 'hover:text-orange-400', bg: 'hover:bg-orange-500/20' }
             ].map((social, index) => (
               <motion.a
                 key={social.label}
                 href={social.href}
+                target={social.target}
+                rel={social.rel}
                 className={`group p-4 bg-white/5 border border-white/10 rounded-xl text-gray-400 transition-all duration-500 backdrop-blur-sm ${social.color} ${social.bg}`}
                 whileHover={{ 
                   y: -8, 
