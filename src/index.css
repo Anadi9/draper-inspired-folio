@@ -2,97 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Portfolio Design System - Inspired by Draper VC's sophisticated dark theme */
-
+/*
+ * Tailwind + shadcn tokens. The portfolio itself is styled by
+ * src/styles/portfolio.css and the token module in
+ * src/components/portfolio/tokens.ts — these variables only back the
+ * shadcn/ui primitives and the 404 page.
+ */
 @layer base {
   :root {
-    /* Deep space theme with sophisticated blues */
-    --background: 230 35% 7%;
-    --foreground: 213 31% 91%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
 
-    --card: 230 30% 9%;
-    --card-foreground: 213 31% 91%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 230 30% 9%;
-    --popover-foreground: 213 31% 91%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 230 35% 7%;
+    --primary: 42 53% 54%;
+    --primary-foreground: 0 0% 4%;
 
-    --secondary: 230 20% 15%;
-    --secondary-foreground: 213 31% 91%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 230 20% 15%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 60%;
 
-    --accent: 240 100% 70%;
-    --accent-foreground: 230 35% 7%;
+    --accent: 42 26% 85%;
+    --accent-foreground: 0 0% 4%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 213 31% 91%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 230 20% 15%;
-    --input: 230 20% 15%;
-    --ring: 217 91% 60%;
+    --border: 0 0% 16%;
+    --input: 0 0% 16%;
+    --ring: 42 53% 54%;
 
-    --radius: 0.75rem;
+    --radius: 0rem;
 
-    /* Portfolio-specific design tokens */
-    --gradient-radial: radial-gradient(circle at center, hsl(240 100% 70% / 0.15) 0%, transparent 70%);
-    --gradient-hero: linear-gradient(135deg, hsl(230 35% 7%) 0%, hsl(240 30% 12%) 50%, hsl(250 40% 8%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(230 30% 9% / 0.8) 0%, hsl(240 25% 12% / 0.6) 100%);
-    --glow-primary: 0 0 40px hsl(217 91% 60% / 0.3);
-    --glow-accent: 0 0 60px hsl(240 100% 70% / 0.2);
-    --shadow-elegant: 0 25px 50px -12px hsl(230 35% 7% / 0.8);
-    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 4%;
+    --sidebar-primary: 0 0% 4%;
     --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 42 26% 85%;
+    --sidebar-accent-foreground: 0 0% 4%;
+    --sidebar-border: 0 0% 16%;
+    --sidebar-ring: 42 53% 54%;
   }
 
   .dark {
-    /* Dark mode uses same sophisticated theme */
-    --background: 230 35% 7%;
-    --foreground: 213 31% 91%;
-    --card: 230 30% 9%;
-    --card-foreground: 213 31% 91%;
-    --popover: 230 30% 9%;
-    --popover-foreground: 213 31% 91%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 230 35% 7%;
-    --secondary: 230 20% 15%;
-    --secondary-foreground: 213 31% 91%;
-    --muted: 230 20% 15%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 240 100% 70%;
-    --accent-foreground: 230 35% 7%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 213 31% 91%;
-    --border: 230 20% 15%;
-    --input: 230 20% 15%;
-    --ring: 217 91% 60%;
-    --sidebar-background: 230 30% 9%;
-    --sidebar-foreground: 213 31% 91%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 230 35% 7%;
-    --sidebar-accent: 230 20% 15%;
-    --sidebar-accent-foreground: 213 31% 91%;
-    --sidebar-border: 230 20% 15%;
-    --sidebar-ring: 217 91% 60%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
   }
 }
 
@@ -102,220 +62,17 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
-    background: var(--gradient-hero);
-    min-height: 100vh;
-    cursor: none; /* Hide default cursor when custom cursor is active */
-  }
-
-  html {
-    scroll-behavior: smooth;
-  }
-
-  /* Custom cursor styles */
-  .custom-cursor-active {
-    cursor: none !important;
-  }
-
-  .custom-cursor-active * {
-    cursor: none !important;
-  }
-
-  /* Ensure interactive elements still show pointer cursor for accessibility */
-  .custom-cursor-active button,
-  .custom-cursor-active a,
-  .custom-cursor-active [role="button"],
-  .custom-cursor-active [tabindex] {
-    cursor: pointer !important;
+    @apply bg-background text-foreground antialiased;
   }
 }
 
-/* GSAP Animation Utilities */
 @layer utilities {
-  /* GSAP-ready classes for initial states */
-  .gsap-ready {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-
-  .gsap-ready-scale {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-
-  .gsap-ready-slide-left {
-    opacity: 0;
-    transform: translateX(-100px);
-  }
-
-  .gsap-ready-slide-right {
-    opacity: 0;
-    transform: translateX(100px);
-  }
-
-  .gsap-ready-rotate {
-    opacity: 0;
-    transform: rotate(-180deg) scale(0.5);
-  }
-
-  /* Animation trigger classes */
-  .gsap-trigger {
-    /* This class can be used to trigger animations */
-  }
-
-  /* Hover effect classes */
-  .gsap-hover {
-    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  }
-
-  .gsap-hover:hover {
-    transform: scale(1.05);
-  }
-  
-  .text-glow {
-    text-shadow: 0 0 20px hsl(var(--primary) / 0.5);
-  }
-
-  /* Custom cursor utilities */
-  .cursor-glow {
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.6);
-  }
-
-  .cursor-glow-accent {
-    box-shadow: 0 0 30px hsl(var(--accent) / 0.5);
-  }
-
-  .cursor-magnetic {
-    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  }
-
-  .cursor-particle {
-    animation: particleFade 0.5s ease-out forwards;
-  }
-  
-  .backdrop-blur-elegant {
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-  }
-  
-  .border-glow {
-    border: 1px solid hsl(var(--primary) / 0.3);
-    box-shadow: var(--glow-primary);
-  }
-  
-  .card-glass {
-    background: var(--gradient-card);
-    backdrop-filter: blur(20px);
-    border: 1px solid hsl(var(--border) / 0.3);
-  }
-}
-
-/* GSAP Animation Keyframes - Keep only essential ones */
-@keyframes particleFade {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.1);
-  }
-}
-
-/* Essential Animations Only */
-
-/* Fade In Up - For entrance animations */
-@keyframes fadeInUp {
-  0% { transform: translateY(20px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
-}
-
-/* Progress Fill - For skill bars */
-@keyframes progressFill {
-  0% { width: 0%; }
-  100% { width: var(--progress-width); }
-}
-
-/* Subtle shimmer for text */
-@keyframes shimmer {
-  0%, 100% { background-position: 200% 0; }
-  50% { background-position: -200% 0; }
-}
-
-/* Utility Classes */
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.animate-progress-fill {
-  animation: progressFill 1.5s ease-out forwards;
-}
-
-/* Hover Effects - Subtle and Professional */
-.hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.hover-scale {
-  transition: transform 0.2s ease;
-}
-
-.hover-scale:hover {
-  transform: scale(1.02);
-}
-
-/* Text shimmer effect - subtle */
-.text-shimmer {
-  background: linear-gradient(
-    90deg,
-    hsl(var(--foreground)) 0%,
-    hsl(var(--primary)) 50%,
-    hsl(var(--foreground)) 100%
-  );
-  background-size: 200% 100%;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer 3s ease-in-out infinite;
-}
-
-/* Additional Effects */
-.text-glow {
-  text-shadow: 0 0 10px hsl(var(--primary) / 0.5);
-}
-
-.shadow-glow-primary {
-  box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
-}
-
-.shadow-glow-primary\/20 {
-  box-shadow: 0 0 15px hsl(var(--primary) / 0.2);
-}
-
-.shadow-glow-primary\/30 {
-  box-shadow: 0 0 25px hsl(var(--primary) / 0.3);
-}
-
-.border-glow {
-  border: 1px solid hsl(var(--border));
-  transition: all 0.3s ease;
-}
-
-.border-glow:hover {
-  border-color: hsl(var(--primary) / 0.5);
-  box-shadow: 0 0 10px hsl(var(--primary) / 0.3);
 }

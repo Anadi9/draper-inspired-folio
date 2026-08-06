@@ -1,0 +1,322 @@
+/* ==========================================================================
+   Portfolio — 2026 edition
+   Layout lives in inline styles on the components; this file carries the
+   globals, keyframes, hover states, and the responsive overrides that have to
+   beat those inline styles.
+   ========================================================================== */
+
+:root {
+  --ink: #0a0a0a;
+  --paper: #ffffff;
+  --accent: #e4ded0;
+  --accent-edge: #cfc6b2;
+  --mark: #c9a24b;
+  --mark-paper: #8a6a2a;
+}
+
+html {
+  scroll-behavior: auto; /* Lenis owns scrolling */
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  font-family: Archivo, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  cursor: auto;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--accent);
+}
+
+@keyframes pf-tick {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes pf-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.2; }
+}
+
+@keyframes pf-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* --- hover states -------------------------------------------------------
+   Every state below is declared for two triggers: `:hover`, gated behind
+   `@media (hover: hover)` so a tap on a touch screen can't leave it stuck on
+   until you tap something else, and `:focus-visible`, so the keyboard gets the
+   same feedback the mouse does. The richer JS-driven states in
+   use-portfolio-motion go through `bindActive`, which adds a third trigger —
+   see the note there. */
+
+/* Solid button that nudges up-left on hover. */
+.pf-nudge {
+  transition: transform 0.18s ease;
+}
+.pf-nudge:focus-visible {
+  transform: translate(-2px, -2px);
+}
+.pf-nudge-lg:focus-visible {
+  transform: translate(-3px, -3px);
+}
+
+/* Ghost button that fills in. */
+.pf-ghost {
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+.pf-ghost:focus-visible {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+@media (hover: hover) {
+  .pf-nudge:hover {
+    transform: translate(-2px, -2px);
+  }
+  .pf-nudge-lg:hover {
+    transform: translate(-3px, -3px);
+  }
+  .pf-ghost:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+}
+
+/* One visible focus ring for everything focusable, in the status-neutral gold
+   so it never collides with the status hue. */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--mark);
+  outline-offset: 3px;
+}
+
+/* Stack columns and contact cells are GSAP-driven — see blocks 9 and 10 in
+   use-portfolio-motion. Their hover states have no CSS equivalent here except
+   the reduced-motion fallback further down. */
+
+/* Hero inline nav + generic underline-on-hover links. */
+.pf-underline {
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.25s ease;
+}
+.pf-underline:focus-visible {
+  background-size: 100% 2px;
+}
+
+/* End-card outline link. */
+.pf-outline {
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.pf-outline:focus-visible {
+  border-color: var(--paper);
+}
+
+@media (hover: hover) {
+  .pf-underline:hover {
+    background-size: 100% 2px;
+  }
+  .pf-outline:hover {
+    border-color: var(--paper);
+  }
+}
+
+/* Reduced motion: kill the decorative loops outright, and give the two
+   GSAP-driven hovers a static CSS equivalent (the JS never binds them). */
+@media (prefers-reduced-motion: reduce) {
+  [data-hero-badge],
+  [data-marquee],
+  [data-rail-ticker] [data-tick] {
+    animation: none !important;
+  }
+  [data-stack-col]:hover [data-stack-fill],
+  [data-stack-col]:focus-within [data-stack-fill],
+  [data-contact-cell]:hover [data-cell-fill],
+  [data-contact-cell]:focus-within [data-cell-fill] {
+    transform: scaleY(1) !important;
+  }
+  [data-stack-col]:hover [data-stack-heading],
+  [data-stack-col]:hover [data-stack-item],
+  [data-stack-col]:focus-within [data-stack-heading],
+  [data-stack-col]:focus-within [data-stack-item] {
+    color: var(--ink) !important;
+  }
+  [data-contact-cell]:hover [data-cell-kind],
+  [data-contact-cell]:hover [data-cell-value],
+  [data-contact-cell]:focus-within [data-cell-kind],
+  [data-contact-cell]:focus-within [data-cell-value] {
+    color: var(--paper) !important;
+  }
+  [data-contact-cell]:hover [data-cell-arrow],
+  [data-contact-cell]:focus-within [data-cell-arrow] {
+    opacity: 1 !important;
+  }
+}
+
+/* --- responsive ---------------------------------------------------------
+
+   `--spine-x` is the single source of truth for the timeline layout, and it is
+   deliberately declared here rather than in JS. `buildRoute` reads it off the
+   computed style: zero means the wide layout (cards alternate, the line weaves
+   between them), any positive value means the narrow one (cards stack in one
+   column and the line straightens into a vertical spine running down their
+   left). Because the number lives in the media query, the breakpoint exists in
+   exactly one place and the JS can't disagree with the CSS about which layout
+   is on screen. */
+
+[data-timeline] {
+  --spine-x: 0px;
+}
+
+/* `--reel-swipe` is the same contract for the work reel: 0 is the pinned
+   layout, where the page's vertical scroll drags the track sideways, and 1 is
+   the swipe layout, where the track is a real horizontal scroller the finger
+   drives directly. use-portfolio-motion reads it and builds one mechanism or
+   the other. The pin isn't merely unnecessary on a touch screen, it's wrong —
+   it holds the section still while the reader swipes at a row that only moves
+   when they scroll past it. */
+
+[data-hwrap] {
+  --reel-swipe: 0;
+}
+
+@media (max-width: 1024px) {
+  /* Spine at 22px, cards clearing it at 56px. */
+  [data-timeline] {
+    --spine-x: 22px;
+    padding-left: 56px !important;
+  }
+  [data-portfolio] { flex-direction: column !important; align-items: stretch !important; }
+  [data-rail] {
+    position: sticky !important;
+    top: 0 !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: auto !important;
+    /* Inset, so the inversion band covers it — see the seam block in
+       use-portfolio-motion. Horizontal bar here, so the edge moves to the bottom. */
+    box-shadow: inset 0 -3px 0 var(--ink) !important;
+    z-index: 60 !important;
+    overflow-x: auto !important;
+  }
+  [data-rail-header] {
+    flex: none !important;
+    border-bottom: 0 !important;
+    border-right: 2px solid var(--ink) !important;
+    padding: 12px 14px !important;
+  }
+  [data-rail-stats], [data-rail-ticker] { display: none !important; }
+  button[data-copy] { display: none !important; }
+  [data-rail-nav] {
+    display: flex !important;
+    flex-direction: row !important;
+    flex: 1 !important;
+    overflow-x: auto !important;
+    padding: 0 6px !important;
+    gap: 2px !important;
+  }
+  [data-nav] { flex: none !important; white-space: nowrap !important; padding: 9px 12px !important; }
+  [data-rail-cta] { flex: none !important; padding: 12px 18px !important; white-space: nowrap !important; }
+  [data-hpad] { padding-left: 28px !important; padding-right: 28px !important; flex-wrap: wrap !important; row-gap: 8px !important; }
+  #journey, #stack, #contact { padding-left: 28px !important; padding-right: 28px !important; }
+  [data-hero-cols] { grid-template-columns: 1fr !important; }
+  [data-hero-cols] > div { border-right: 0 !important; }
+  [data-hero-cols] > div + div { border-top: 2px solid var(--ink) !important; }
+  [data-work-head] { grid-template-columns: 1fr !important; gap: 24px !important; }
+  [data-stack-head] { grid-template-columns: 1fr !important; gap: 24px !important; }
+  [data-contact-head] { grid-template-columns: 1fr !important; gap: 24px !important; }
+  [data-contact-links] { grid-template-columns: repeat(2, 1fr) !important; }
+  [data-year] { width: 100% !important; align-self: stretch !important; }
+  [data-case-head] { grid-template-columns: 1fr !important; gap: 24px !important; }
+  [data-case-results] { gap: 20px !important; }
+
+  /* Work reel, swipe layout. The wrapper stops being a 100vh window and just
+     wraps the track at its natural height, keeping the padding the progress
+     row is positioned against. */
+  [data-hwrap] {
+    --reel-swipe: 1;
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding-bottom: 68px !important;
+  }
+  [data-htrack] {
+    /* The track is the one [data-hpad] element that is itself a flex row, and
+       the wrap above would break it into a vertical stack inside a clipped
+       window — plates cut off top and bottom, and nothing to scroll sideways. */
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 28px;
+    overscroll-behavior-x: contain;
+    padding-bottom: 0 !important;
+    /* The bar and counter under the reel already report position. */
+    scrollbar-width: none;
+  }
+  [data-htrack]::-webkit-scrollbar { display: none; }
+  [data-hhint='wide'] { display: none !important; }
+  [data-hhint='swipe'] { display: inline !important; }
+  [data-plate], [data-endcard] { scroll-snap-align: start; }
+  [data-plate] { width: min(72vw, 460px) !important; }
+  [data-endcard] { width: min(66vw, 420px) !important; }
+}
+
+@media (max-width: 900px) {
+  [data-stack-grid] { grid-template-columns: repeat(2, 1fr) !important; }
+  [data-case-moves] { grid-template-columns: 1fr !important; }
+  [data-case-results] { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 680px) {
+  /* Tighter spine — 18px of gutter is all the room there is at this width. */
+  [data-timeline] {
+    --spine-x: 16px;
+    padding-left: 40px !important;
+  }
+  /* The bar is three blocks: identity, nav, CTA. The outer two are sized by
+     their content and the nav is what's left over, so at this width the nav
+     was down to ~110px of the 533px it wants — a stub reading "HOME ■ SE"
+     with the CTA hard against it, which looks like the CTA is sitting on top
+     of the nav. The identity block gives up everything but the mark: the name
+     is restated in 40px type in the hero directly below, and the two chips are
+     repeated in the contact grid and on the reel's end card. That hands the
+     nav ~240px — two items and an honest scroll — and it's the nav that has to
+     work here, being the only way to reach a section from the top of the page. */
+  [data-rail-header] { padding: 10px 12px !important; }
+  [data-rail-name], [data-rail-chips] { display: none !important; }
+  [data-nav] { padding: 8px 10px !important; font-size: 10px !important; }
+  [data-rail-cta] { padding: 10px 14px !important; font-size: 11px !important; }
+  [data-hpad] { padding-left: 18px !important; padding-right: 18px !important; }
+  #journey, #stack, #contact { padding-left: 18px !important; padding-right: 18px !important; }
+  [data-hoffset] { left: 18px !important; right: 18px !important; }
+  /* Clear the role line below it. At bottom:20 the two stacked on top of each
+     other, because [data-hoffset] sits at bottom:40 and is ~14px tall. */
+  [data-hero-name] { left: 18px !important; right: 18px !important; bottom: 66px !important; }
+  [data-hero-badge] { width: 56px !important; height: 56px !important; top: 14px !important; right: 14px !important; }
+  #home { height: auto !important; min-height: 100vh !important; min-height: 100dvh !important; overflow: visible !important; }
+  /* The wipe is an opaque hero-sized panel parked one screen below the hero,
+     and `overflow: visible` above stops the hero clipping it — so it lands on
+     top of the work reel and paints the whole thing out in ink. It has no job
+     at this width in any case: the hero hand-off that drives it is gated to
+     wider viewports in use-portfolio-motion, so below the breakpoint it never
+     animates, it only covers. */
+  [data-wipe] { display: none !important; }
+  [data-hero-visual] { flex: none !important; height: 50vh !important; min-height: 300px !important; }
+  [data-plate] { width: min(85vw, 520px) !important; }
+  [data-endcard] { width: min(85vw, 480px) !important; }
+  [data-htrack] { padding: 0 18px 0 !important; gap: 18px !important; scroll-padding-left: 18px; }
+  /* Same 112/40/112 rhythm as every other section, scaled to this width. */
+  [data-case] { padding-top: 56px !important; padding-bottom: 72px !important; }
+  [data-stack-grid] { grid-template-columns: 1fr !important; }
+  [data-contact-links] { grid-template-columns: 1fr !important; }
+}
